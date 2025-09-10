@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CycleSync - Visual Overview</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #fdf2f8 0%, #faf5ff 100%);
+            padding: 2rem;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .header h1 {
+            color: #ec4899;
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        
+        .header p {
+            color: #6b7280;
+            font-size: 1.25rem;
+        }
+        
+        .screens-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .phone-mockup {
+            background: #1f2937;
+            border-radius: 3rem;
+            padding: 1.5rem 1rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            position: relative;
+        }
+        
+        .phone-mockup::before {
+            content: '';
+            position: absolute;
+            top: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 5px;
+            background: #374151;
+            border-radius: 3px;
+        }
+        
+        .screen {
+            background: white;
+            border-radius: 2rem;
+            overflow: hidden;
+            height: 600px;
+            position: relative;
+        }
+        
+        .screen-header {
+            background: white;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #f3f4f6;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .app-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .heart-icon {
+            width: 2rem;
+            height: 2rem;
+            background: #ec4899;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1rem;
+        }
+        
+        .app-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: #1f2937;
+        }
+        
+        .notification-dot {
+            width: 0.75rem;
+            height: 0.75rem;
+            background: #ec4899;
+            border-radius: 50%;
+            position: relative;
+        }
+        
+        .screen-content {
+            padding: 1.5rem;
+            height: calc(100% - 140px);
+            overflow-y: auto;
+        }
+        
+        .bottom-nav {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top: 1px solid #f3f4f6;
+            padding: 0.75rem;
+            display: flex;
+            justify-around;
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.5rem;
+            border-radius: 0.75rem;
+        }
+        
+        .nav-item.active {
+            background: #fdf2f8;
+            color: #ec4899;
+        }
+        
+        .nav-item:not(.active) {
+            color: #6b7280;
+        }
+        
+        .nav-icon {
+            width: 1.5rem;
+            height: 1.5rem;
+            background: currentColor;
+            border-radius: 0.25rem;
+        }
+        
+        .nav-label {
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+            margin-bottom: 1rem;
+        }
+        
+        .card-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 1rem;
+        }
+        
+        .status-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .status-item {
+            padding: 1rem;
+            border-radius: 0.75rem;
+            text-align: center;
+        }
+        
+        .status-item.pink {
+            background: #fdf2f8;
+            color: #ec4899;
+        }
+        
+        .status-item.purple {
+            background: #faf5ff;
+            color: #a855f7;
+        }
+        
+        .status-item.blue {
+            background: #eff6ff;
+            color: #3b82f6;
+        }
+        
+        .status-item.green {
+            background: #f0fdf4;
+            color: #22c55e;
+        }
+        
+        .status-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 0.25rem;
+        }
+        
+        .status-label {
+            font-size: 0.875rem;
+            opacity: 0.8;
+        }
+        
+        .confidence-bar {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #f3f4f6;
+        }
+        
+        .confidence-track {
+            flex: 1;
+            height: 0.5rem;
+            background: #f3f4f6;
+            border-radius: 0.25rem;
+            overflow: hidden;
+        }
+        
+        .confidence-fill {
+            height: 100%;
+            background: #22c55e;
+            width: 85%;
+        }
+        
+        .tip-list {
+            space-y: 0.75rem;
+        }
+        
+        .tip-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            padding: 0.75rem 0;
+        }
+        
+        .tip-icon {
+            width: 1.25rem;
+            height: 1.25rem;
+            background: #ec4899;
+            border-radius: 50%;
+            flex-shrink: 0;
+            margin-top: 0.125rem;
+        }
+        
+        .quick-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+        }
+        
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem;
+            border-radius: 0.75rem;
+            font-weight: 500;
+            font-size: 0.875rem;
+        }
+        
+        .action-btn.pink {
+            background: #fdf2f8;
+            color: #be185d;
+        }
+        
+        .action-btn.purple {
+            background: #faf5ff;
+            color: #7c3aed;
+        }
+        
+        .action-btn.blue {
+            background: #eff6ff;
+            color: #2563eb;
+        }
+        
+        .btn-icon {
+            width: 1.25rem;
+            height: 1.25rem;
+            background: currentColor;
+            border-radius: 0.25rem;
+        }
+        
+        .modal-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+        
+        .modal {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            width: 100%;
+            max-width: 300px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .modal-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+        }
+        
+        .close-btn {
+            width: 1.5rem;
+            height: 1.5rem;
+            background: #6b7280;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        
+        .quick-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .quick-option {
+            padding: 0.75rem;
+            background: #fdf2f8;
+            color: #be185d;
+            border-radius: 0.5rem;
+            font-size: 0.75rem;
+            text-align: center;
+            cursor: pointer;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+        }
+        
+        .primary-btn {
+            width: 100%;
+            background: #ec4899;
+            color: white;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .screen-label {
+            text-align: center;
+            margin-top: 1rem;
+            color: #6b7280;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        
+        .partner-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem;
+            border: 1px solid #f3f4f6;
+            border-radius: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .partner-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .partner-avatar {
+            width: 3rem;
+            height: 3rem;
+            background: #fdf2f8;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .partner-details h3 {
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 0.25rem;
+        }
+        
+        .partner-details p {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+        
+        .consent-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        
+        .consent-status.granted {
+            color: #059669;
+        }
+        
+        .consent-status.pending {
+            color: #d97706;
+        }
+        
+        .status-icon {
+            width: 1.25rem;
+            height: 1.25rem;
+            border-radius: 50%;
+            background: currentColor;
+        }
+        
+        .feature-highlight {
+            background: linear-gradient(135deg, #ec4899, #a855f7);
+            color: white;
+            padding: 1rem;
+            border-radius: 1rem;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        
+        .feature-highlight h3 {
+            margin-bottom: 0.5rem;
+        }
+        
+        .recent-updates {
+            margin-bottom: 1rem;
+        }
+        
+        .update-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background: #eff6ff;
+            border-radius: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .update-icon {
+            width: 1.25rem;
+            height: 1.25rem;
+            background: #3b82f6;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        
+        .update-content {
+            flex: 1;
+        }
+        
+        .update-text {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #1f2937;
+            margin-bottom: 0.25rem;
+        }
+        
+        .update-date {
+            font-size: 0.75rem;
+            color: #6b7280;
+        }
+        
+        @media (max-width: 768px) {
+            .screens-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>CycleSync</h1>
+        <p>Understand. Respect. Support. — Visual Application Overview</p>
+    </div>
+    
+    <div class="screens-container">
+        <!-- Dashboard Screen -->
+        <div class="phone-mockup">
+            <div class="screen">
+                <div class="screen-header">
+                    <div class="app-logo">
+                        <div class="heart-icon">♥</div>
+                        <div>
+                            <div class="app-title">CycleSync</div>
+                        </div>
+                    </div>
+                    <div class="notification-dot"></div>
+                </div>
+                
+                <div class="screen-content">
+                    <div class="feature-highlight">
+                        <h3>Smart Dashboard</h3>
+                        <p>AI-powered cycle predictions with confidence scoring</p>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-title">Current Status</div>
+                        <div class="status-grid">
+                            <div class="status-item pink">
+                                <div class="status-value">Luteal</div>
+                                <div class="status-label">Day 3</div>
+                            </div>
+                            <div class="status-item purple">
+                                <div class="status-value">Menstruation</div>
+                                <div class="status-label">In ~4 days</div>
+                            </div>
+                        </div>
+                        <div class="confidence-bar">
+                            <span style="font-size: 0.875rem; color: #6b7280;">Confidence:</span>
+                            <div class="confidence-track">
+                                <div class="confidence-fill"></div>
+                            </div>
+                            <span style="font-size: 0.875rem; font-weight: 500;">85%</span>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-title">Energy & Mood</div>
+                        <div class="status-grid">
+                            <div class="status-item green">
+                                <div class="status-value">Declining</div>
+                                <div class="status-label">Energy</div>
+                            </div>
+                            <div class="status-item blue">
+                                <div class="status-value">Sensitive</div>
+                                <div class="status-label">Mood</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-title">Support Tips</div>
+                        <div class="tip-list">
+                            <div class="tip-item">
+                                <div class="tip-icon"></div>
+                                <div>Practice extra patience and understanding</div>
+                            </div>
+                            <div class="tip-item">
+                                <div class="tip-icon"></div>
+                                <div>Offer emotional support and listening</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bottom-nav">
+                    <div class="nav-item active">
+                        <div class="nav-icon"></div>
+                        <div class="nav-label">Dashboard</div>
+                    </div>
+                    <div class="nav-item">
+                        <div class="nav-icon"></div>
+                        <div class="nav-label">Partners</div>
+                    </div>
+                    <div class="nav-item">
+                        <div class="nav-icon"></div>
+                        <div class="nav-label">Calendar</div>
+                    </div>
+                    <div class="nav-item">
+                        <div class="nav-icon"></div>
+                        <div class="nav-label">Settings</div>
+                    </div>
+                </div>
+            </div>
+            <div class="screen-label">Main Dashboard - Smart Predictions</div>
+        </div>
+        
+        <!-- Quick Log Modal -->
+        <div class="phone-mockup">
+            <div class="screen">
+                <div class="screen-header">
+                    <div class="app-logo">
+                        <div class="heart-icon">♥</div>
+                        <div class="app-title">CycleSync</div>
+                    </div>
+                </div>
+                
+                <div class="screen-content">
+                    <div class="card">
+                        <div class="card-title">Recent Updates</div>
+                        <div class="recent-updates">
+                            <div class="update-item">
+                                <div class="update-icon"></div>
+                                <div class="update-content">
+                                    <div class="update-text">Started today, moderate flow</div>
+                                    <div class="update-date">2025-08-10 • Logged today</div>
+                                </div>
+                            </div>
+                            <div class="update-item">
+                                <div class="update-icon"></div>
+                                <div class="update-content">
+                                    <div class="update-text">Feeling crampy</div>
+                                    <div class="update-date">2025-08-09 • Logged yesterday</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-title">Quick Actions</div>
+                        <div class="quick-actions">
+                            <div class="action-btn pink">
+                                <div class="btn-icon"></div>
+                                <span>Plan Surprise</span>
+                            </div>
+                            <div class="action-btn purple">
+                                <div class="btn-icon"></div>
+                                <span>Set Reminder</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="modal-overlay">
+                    <div class="modal">
+                        <div class="modal-header">
+                            <div class="modal-title">Quick Update</div>
+                            <div class="close-btn"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <div class="form-label">Quick Options:</div>
+                            <div class="quick-options">
+                                <div class="quick-option">Started today</div>
+                                <div class="quick-option">Started yesterday</div>
+                                <div class="quick-option">Ended today</div>
+                                <div class="quick-option">Feeling moody</div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Custom Notes:</label>
+                            <input type="text" class="form-input" placeholder="e.g., Heavy flow, cramping">
+                        </div>
+                        
+                        <button class="primary-btn">Log Update</button>
+                    </div>
+                </div>
+                
+                <div class="bottom-nav">
+                    <div class="nav-item active">
+                        <div class="nav-icon"></div>
+                        <div class="nav-label">Dashboard</div>
+                    </div>
+                    <div class="nav-item">
+                        <div class="nav-icon"></div>
+                        <div class="nav-label">Partners</div>
+                    </div>
+                    <div class="nav-item">
+                        <div class="nav-icon"></div>
+                        <div class="nav-label">Calendar</div>
+                    </div>
+                    <div class="nav-item">
+                        <div class="nav-icon"></div>
+                        <div class="nav-label">Settings</div>
+                    </div>
+                </div>
+            </div>
+            <div class="screen-label">Quick Log Modal - Manual Input System</div>
+        </div>
+        
+        <!-- Partners Screen -->
+        <div class="phone-mockup">
+            <div class="screen">
+                <div class="screen-header">
+                    <div class="app-logo">
+                        <div class="heart-icon">♥</div>
+                        <div class="app-title">Partners</div>
+                    </div>
+                    <div class="action-btn blue" style="padding: 0.5rem 1rem; font-size: 0.875rem;">
+                        <div class="btn-icon"></div>
+                        <span>Add Partner</span>
+                    </div>
+                </div>
+                
+                <div class="screen-content">
+                    <div class="feature-highlight">
+                        <h3>Consent-First Design</h3>
+                        <p>Respectful tracking with full privacy controls</p>
+                    </div>
+                    
+                    <div class="partner-item">
+                        <div class="partner-info">
+                            <div class="partner-avatar">
+                                <div class="heart-icon" style="background: #ec4899; width: 1.5rem; height: 1.5rem;">♥</div>
+                            </div>
+                            <div class="partner-details">
+                                <h3>Sarah</h3>
+                                <p>Romantic Partner</p>
+                            </div>
+                        </div>
+                        <div class="consent-status granted">
+                            <div class="status-icon"></div>
+                            <span>Consent Granted</span>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-title">Data Sharing Permissions</div>
+                        <div class="status-grid">
+                            <div class="status-item green">
+                                <div class="status-value">✓</div>
+                                <div class="status-label">Cycle Phase</div>
+                            </div>
+                            <div class="status-item green">
+                                <div class="status-value">✓</div>
+                                <div class="status-label">Mood</div>
+                            </div>
+                            <div class="status-item pink">
+                                <div class="status-value">✗</div>
+                                <div class="status-label">Ovulation</div>
+                            </div>
+                            <div class="status-item green">
+                                <div class="status-value">✓</div>
+                                <div class="status-label">Energy</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-title">Cycle History</div>
+                        <div style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.5rem;">Last 5 cycles: 27, 29, 28, 26, 28 days</div>
+                        <div style="font-size: 0.875rem; color: #6b7280;">Average: 28 days • Variance: Low</div>
+                    </div>
+                </div>
+                
+                <div class="bottom-nav">
+                    <div class="nav-item">
+                        <div class="nav-icon"></div>
+                        <div class="nav-label">Dashboard</div>
+                    </div>
+                    <div class="nav-item active">
+                        <div class="nav-icon"></div>
+                        <div class="nav-label">Partners</div>
+                    </div>
+                    <div class="nav-item">
+                        <div class="nav-icon"></div>
+                        <div class="nav-label">Calendar</div>
+                    </div>
+                    <div class="nav-item">
+                        <div class="nav-icon"></div>
+                        <div class="nav-label">Settings</div>
+                    </div>
+                </div>
+            </div>
+            <div class="screen-label">Partners Management - Consent & Privacy</div>
+        </div>
+        
+        <!-- Settings Screen -->
+        <div class="phone-mockup">
+            <div class="screen">
+                <div class="screen-header">
+                    <div class="app-logo">
+                        <div class="heart-icon">♥</div>
+                        <div class="app-title">Settings</div>
+                    </div>
+                </div>
+                
+                <div class="screen-content">
+                    <div class="card">
+                        <div class="card-title">Privacy & Security</div>
+                        <div style="margin-bottom: 1rem;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 0;">
+                                <div>
+                                    <div style="font-weight: 500;">Data Encryption</div>
+                                    <div style="font-size: 0.875rem; color: #6b7280;">End-to-end encryption</div>
+                                </div>
+                                <div style="width: 3rem; height: 1.5rem; background: #22c55e; border-radius: 0.75rem; position: relative;">
+                                    <div style="position: absolute; right: 0.25rem; top: 0.25rem; width: 1rem; height: 1rem; background: white; border-radius: 50%;"></div>
+                                </div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 0;">
+                                <div>
+                                    <div style="font-weight: 500;">Consent Logging</div>
+                                    <div style="font-size: 0.875rem; color: #6b7280;">Track all changes</div>
+                                </div>
+                                <div style="width: 3rem; height: 1.5rem; background: #22c55e; border-radius: 0.75rem; position: relative;">
+                                    <div style="position: absolute; right: 0.25rem; top: 0.25rem; width: 1rem; height: 1rem; background: white; border-radius: 50%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-title">Smart Features</div>
+                        <div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 0;">
+                                <div>
+                                    <div style="font-weight: 500;">AI Support Tips</div>
+                                    <div style="font-size: 0.875rem; color: #6b7280;">Personalized suggestions</div>
+                                </div>
+                                <div style="width: 3rem; height: 1.5rem; background: #22c55e; border-radius: 0.75rem; position: relative;">
+                                    <div style="position: absolute; right: 0.25rem; top: 0.25rem; width: 1rem; height: 1rem; background: white; border-radius: 50%;"></div>
+                                </div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 0;">
+                                <div>
+                                    <div style="font-weight: 500;">Smart Check-ins</div>
+                                    <div style="font-size: 0.875rem; color: #6b7280;">Confidence-based reminders</div>
+                                </div>
+                                <div style="width: 3rem; height: 1.5rem; background: #f3f4f6; border-radius: 0.75rem; position: relative;">
+                                    <div style="position: absolute; left: 0.25rem; top: 0.25rem; width: 1rem; height: 1rem; background: white; border-radius: 50%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-title">Data Management</div>
+                        <div style="color: #374151;">
+                            <div style="padding: 0.75rem 0; border-bottom: 1px solid #f3f4f6;">Export My Data</div>
+                            <div style="padding: 0.75rem 0; border-bottom: 1px solid #f3f4f6;">Sync with Health Apps</div>
+                            <div style="padding: 0.75rem 0; color: #ef4444;">Delete Account</div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-title">About CycleSync</div>
+                        <div style="font-size: 0.875rem; color: #6b7280; line-height: 1.5;">
+                            <p style="margin-bottom: 0.5rem;">Version 1.0.0</p>
+                            <p style="margin-bottom: 1rem;">Built with respect, consent, and privacy at its core</p>
+                            <div>
+                                <span style="color: #ec4899;">Privacy Policy</span> • <span style="color: #ec4899;">Terms of Service</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bottom-nav">
+                    <div class="nav-item">
+                        <div class="nav-icon"></div>
+                        <div class="nav-label">Dashboard</div>
+                    </div>
+                    <div class="nav-item">
+                        <div class="nav-icon"></div>
+                        <div class="nav-label">Partners</div>
+                    </div>
+                    <div class="nav-item">
+                        <div class="nav-icon"></div>
+                        <div class="nav-label">Calendar</div>
+                    </div>
+                    <div class="nav-item active">
+                        <div class="nav-icon"></div>
+                        <div class="nav-label">Settings</div>
+                    </div>
+                </div>
+            </div>
+            <div class="screen-label">Settings - Privacy & Smart Features</div>
+        </div>
+    </div>
+</body>
+</html>
