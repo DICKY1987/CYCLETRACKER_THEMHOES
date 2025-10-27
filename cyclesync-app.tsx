@@ -53,6 +53,7 @@ const CycleSyncApp = () => {
     const today = new Date();
     const daysSinceStart = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
     const cycleDay = (daysSinceStart % cycleLength) + 1;
+    const ovulationDay = Math.round(cycleLength / 2);
 
     let phase, phaseDay, nextPhase, daysToNext, energy, mood, supportTips;
 
@@ -69,11 +70,11 @@ const CycleSyncApp = () => {
         "Suggest gentle activities or rest time",
         "Stock up on her preferred menstrual products"
       ];
-    } else if (cycleDay >= 6 && cycleDay <= 13) {
+    } else if (cycleDay >= 6 && cycleDay < ovulationDay) {
       phase = "Follicular";
       phaseDay = cycleDay - 5;
       nextPhase = "Ovulation";
-      daysToNext = 14 - cycleDay;
+      daysToNext = ovulationDay - cycleDay;
       energy = "Rising";
       mood = "Positive";
       supportTips = [
@@ -82,7 +83,7 @@ const CycleSyncApp = () => {
         "Support new projects or goals she mentions",
         "Show appreciation for her positive energy"
       ];
-    } else if (cycleDay === 14) {
+    } else if (cycleDay === ovulationDay) {
       phase = "Ovulation";
       phaseDay = 1;
       nextPhase = "Luteal";
@@ -97,7 +98,7 @@ const CycleSyncApp = () => {
       ];
     } else {
       phase = "Luteal";
-      phaseDay = cycleDay - 14;
+      phaseDay = cycleDay - ovulationDay;
       nextPhase = "Menstruation";
       daysToNext = cycleLength - cycleDay + 1;
       energy = "Declining";
